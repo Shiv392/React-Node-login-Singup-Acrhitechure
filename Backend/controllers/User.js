@@ -61,3 +61,31 @@ exports.getAllUser= async(req,res,next)=>{
     console.log('getting all user',err);
   }
 }
+
+
+exports.forgetPassword= async(req,res,next)=>{
+  try{
+    const {email,password}=req.body;
+    const saltround=10;
+    let bpassword= await bcrypt.hash(password,saltround)
+    User.findByPk(email)
+    .then(user => {
+      if (user) {
+        user.update({
+          password: bpassword
+        })
+        return user.save();
+      } else {
+        throw new Error('User not found');
+      }
+    })
+    .catch(err => {
+      console.log('Error updating password:', err);
+    });
+     
+  }
+  catch(err){
+    res.json({success:false,message:'could not update password',error:err});
+    console.log(err);
+  }
+}

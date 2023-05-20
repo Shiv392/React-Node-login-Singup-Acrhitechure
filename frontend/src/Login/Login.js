@@ -51,6 +51,12 @@ function Login() {
       </div>
       <div className="input-container">
           <input value={value.password} onChange={e=> setValues({...value,password:e.target.value})} type="password" placeholder="Enter password" />
+          
+        
+       <span >
+       <Link style={{fontSize:'13px'}} to="/forgetpassword" className='text text-start'>Forget Password</Link>
+        </span> 
+      
         </div>
          <button type="submit" className="submit" onClick={loginClick}>
         Sign in
