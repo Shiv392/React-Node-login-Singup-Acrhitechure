@@ -19,7 +19,7 @@ exports.SingupUser= async(req,res,next)=>{
       })
      }
      else{
-      return res.status(403).json({success:false,message:'user already exists'})
+      return res.json({success:false,message:'Email is already registered'})
      }
     }
      catch(err){
@@ -32,17 +32,16 @@ exports.LoginUser= async(req,res,next)=>{
     const {email,password} =req.body;
       let response= await User.findOne({where:{email:email}});
       if(!response){
-      return   res.status(404).json({success:false,message:'user not found please singup'})
+        res.json({success:false,message:'user not found please singup'})
       }
       else{
-       bcrypt.compare(response.password,password,(err,user)=>{
-        if(err){
-        res.status(403).json({success:false,message:'Password doesnt match'})
-        }
-        else{
-            res.status(200).json({success:true,message:'login successfull',user:user})
-        }
-       })
+      let compare= await bcrypt.compare(password,response.password);
+      if(compare){
+        return res.status(200).json({success:true,user:response,message:'login successfull'});
+      }
+      else{
+        return res.json({success:false,message:'password donot match'});
+      }
       }
     }
     catch(err){
