@@ -65,32 +65,21 @@ exports.getAllUser= async(req,res,next)=>{
 
 exports.forgetPassword= async(req,res,next)=>{
   try{
-    const {email,password}=req.body;
+    const {email,password} = req.body;
     const saltround=10;
     let bpassword= await bcrypt.hash(password,saltround)
-   User.findByPk(email)
-    .then(user => {
-      if (user) {
-        
-        user.update({
-          password: bpassword
-        })
-        return user.save();
-        } else {
-        user=null;
-      }
-    }).then(user=>{
-      if(user){
-        res.json({success:true,message:'user password has been changed'})
-      }
-      else{
-res.json({success:false,message:'user not found',user:user})
-      }
-    })
-    .catch(err => {
-      console.log('Error updating password:', err);
-    });
-     
+   let user = await User.findByPk(email);
+     if(user){
+      console.log(user);
+      await user.update({
+        password:bpassword
+      })
+      await user.save();
+      res.json({success:true, message:'password has been changed'})
+     }
+     else{
+      res.json({success:false,message:'user not found',user:user});
+     }
   }
   catch(err){
     res.json({success:false,message:'could not update password',error:err});
